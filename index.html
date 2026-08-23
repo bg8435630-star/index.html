@@ -1,0 +1,499 @@
+function drawBackground() {
+    const time = Date.now();
+
+    // =========================
+    // SKY
+    // =========================
+    const sky = ctx.createLinearGradient(0, 0, 0, H);
+
+    sky.addColorStop(0, "#030518");
+    sky.addColorStop(0.35, "#10194a");
+    sky.addColorStop(0.7, "#17285a");
+    sky.addColorStop(1, "#070b18");
+
+    ctx.fillStyle = sky;
+    ctx.fillRect(0, 0, W, H);
+
+    // =========================
+    // MOON
+    // =========================
+    const moonX = W * 0.78;
+    const moonY = H * 0.20;
+
+    const moonGlow = ctx.createRadialGradient(
+        moonX,
+        moonY,
+        10,
+        moonX,
+        moonY,
+        170
+    );
+
+    moonGlow.addColorStop(0, "rgba(100,220,255,.35)");
+    moonGlow.addColorStop(.35, "rgba(70,150,255,.15)");
+    moonGlow.addColorStop(1, "rgba(0,0,0,0)");
+
+    ctx.fillStyle = moonGlow;
+
+    ctx.fillRect(
+        moonX - 180,
+        moonY - 180,
+        360,
+        360
+    );
+
+    ctx.save();
+
+    ctx.shadowBlur = 40;
+    ctx.shadowColor = "#8be9ff";
+
+    ctx.fillStyle = "#dffaff";
+
+    ctx.beginPath();
+    ctx.arc(
+        moonX,
+        moonY,
+        42,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fill();
+
+    ctx.restore();
+
+    // =========================
+    // CLOUDS / ATMOSPHERE
+    // =========================
+    for (let i = 0; i < 6; i++) {
+
+        const cloudX =
+            ((i * 220 + time * 0.01) % (W + 300)) - 150;
+
+        const cloudY =
+            100 + (i % 3) * 55;
+
+        ctx.fillStyle =
+            "rgba(100,150,255,.045)";
+
+        ctx.beginPath();
+
+        ctx.ellipse(
+            cloudX,
+            cloudY,
+            100,
+            25,
+            0,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+    }
+
+    // =========================
+    // STARS
+    // =========================
+    stars.forEach(star => {
+
+        star.x -= star.speed * 0.15;
+
+        if (star.x < 0) {
+            star.x = W;
+        }
+
+        ctx.fillStyle =
+            "rgba(220,245,255,.8)";
+
+        ctx.beginPath();
+
+        ctx.arc(
+            star.x,
+            star.y,
+            star.size,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+    });
+
+    // =========================
+    // DISTANT CITY
+    // =========================
+    const horizon = H * 0.58;
+
+    for (
+        let x = -20;
+        x < W + 50;
+        x += 48
+    ) {
+
+        const buildingHeight =
+            45 +
+            Math.abs(
+                Math.sin(x * 0.08)
+            ) * 120;
+
+        const y =
+            horizon - buildingHeight;
+
+        ctx.fillStyle = "#070c22";
+
+        ctx.fillRect(
+            x,
+            y,
+            42,
+            buildingHeight
+        );
+
+        // Building roof lights
+        ctx.fillStyle =
+            "rgba(50,200,255,.25)";
+
+        ctx.fillRect(
+            x,
+            y,
+            42,
+            2
+        );
+
+        // Windows
+        for (
+            let wy = y + 15;
+            wy < horizon - 10;
+            wy += 18
+        ) {
+
+            for (
+                let wx = x + 8;
+                wx < x + 35;
+                wx += 14
+            ) {
+
+                if (
+                    Math.random() > 0.45
+                ) {
+
+                    ctx.fillStyle =
+                        "rgba(80,220,255,.35)";
+
+                    ctx.fillRect(
+                        wx,
+                        wy,
+                        5,
+                        4
+                    );
+                }
+            }
+        }
+    }
+
+    // =========================
+    // HORIZON GLOW
+    // =========================
+    const horizonGlow =
+        ctx.createLinearGradient(
+            0,
+            horizon - 100,
+            0,
+            horizon + 100
+        );
+
+    horizonGlow.addColorStop(
+        0,
+        "rgba(0,180,255,0)"
+    );
+
+    horizonGlow.addColorStop(
+        .5,
+        "rgba(0,180,255,.18)"
+    );
+
+    horizonGlow.addColorStop(
+        1,
+        "rgba(0,180,255,0)"
+    );
+
+    ctx.fillStyle = horizonGlow;
+
+    ctx.fillRect(
+        0,
+        horizon - 100,
+        W,
+        200
+    );
+
+    // =========================
+    // ROAD
+    // =========================
+    const roadTop = H * 0.60;
+    const roadBottom = H;
+
+    const roadGradient =
+        ctx.createLinearGradient(
+            0,
+            roadTop,
+            0,
+            roadBottom
+        );
+
+    roadGradient.addColorStop(
+        0,
+        "#10172d"
+    );
+
+    roadGradient.addColorStop(
+        1,
+        "#03050c"
+    );
+
+    ctx.fillStyle = roadGradient;
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        W * 0.40,
+        roadTop
+    );
+
+    ctx.lineTo(
+        W * 0.60,
+        roadTop
+    );
+
+    ctx.lineTo(
+        W,
+        roadBottom
+    );
+
+    ctx.lineTo(
+        0,
+        roadBottom
+    );
+
+    ctx.closePath();
+
+    ctx.fill();
+
+    // =========================
+    // ROAD EDGES
+    // =========================
+    ctx.save();
+
+    ctx.lineWidth = 5;
+
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = "#00d9ff";
+
+    ctx.strokeStyle = "#20dfff";
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        W * 0.40,
+        roadTop
+    );
+
+    ctx.lineTo(
+        0,
+        H
+    );
+
+    ctx.stroke();
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        W * 0.60,
+        roadTop
+    );
+
+    ctx.lineTo(
+        W,
+        H
+    );
+
+    ctx.stroke();
+
+    ctx.restore();
+
+    // =========================
+    // 3D ROAD LANE MARKINGS
+    // =========================
+    const roadSpeed =
+        (time / 7 * speed) % 120;
+
+    for (
+        let i = -1;
+        i < 8;
+        i++
+    ) {
+
+        const distance =
+            ((i * 120 + roadSpeed) % 840) / 840;
+
+        const y =
+            roadTop +
+            Math.pow(distance, 1.7) *
+            (H - roadTop);
+
+        const centerX = W / 2;
+
+        const width =
+            5 + distance * 25;
+
+        const height =
+            2 + distance * 12;
+
+        ctx.fillStyle =
+            "rgba(190,245,255,.7)";
+
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = "#35dfff";
+
+        ctx.fillRect(
+            centerX - width / 2,
+            y,
+            width,
+            height
+        );
+    }
+
+    ctx.shadowBlur = 0;
+
+    // =========================
+    // SIDE LIGHTS
+    // =========================
+    for (
+        let i = 0;
+        i < 16;
+        i++
+    ) {
+
+        const progress =
+            ((i * 90 + time / 5 * speed) % 1000)
+            / 1000;
+
+        const y =
+            roadTop +
+            Math.pow(progress, 1.6) *
+            (H - roadTop);
+
+        const sideOffset =
+            20 + progress * 130;
+
+        // LEFT
+        ctx.save();
+
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = "#00eaff";
+
+        ctx.fillStyle = "#32eaff";
+
+        ctx.beginPath();
+
+        ctx.arc(
+            W / 2 - sideOffset,
+            y,
+            3 + progress * 4,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+
+        // RIGHT
+        ctx.beginPath();
+
+        ctx.arc(
+            W / 2 + sideOffset,
+            y,
+            3 + progress * 4,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+
+        ctx.restore();
+    }
+
+    // =========================
+    // ROAD BARRIERS
+    // =========================
+    ctx.save();
+
+    ctx.strokeStyle =
+        "rgba(80,180,255,.45)";
+
+    ctx.lineWidth = 3;
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        0,
+        roadTop + 20
+    );
+
+    ctx.lineTo(
+        W * 0.40,
+        roadTop
+    );
+
+    ctx.stroke();
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        W,
+        roadTop + 20
+    );
+
+    ctx.lineTo(
+        W * 0.60,
+        roadTop
+    );
+
+    ctx.stroke();
+
+    ctx.restore();
+
+    // =========================
+    // MOVING ROAD GLOW
+    // =========================
+    const glowPosition =
+        (time / 3 * speed) % W;
+
+    const roadGlow =
+        ctx.createLinearGradient(
+            glowPosition - 200,
+            0,
+            glowPosition + 200,
+            0
+        );
+
+    roadGlow.addColorStop(
+        0,
+        "rgba(0,220,255,0)"
+    );
+
+    roadGlow.addColorStop(
+        .5,
+        "rgba(0,220,255,.07)"
+    );
+
+    roadGlow.addColorStop(
+        1,
+        "rgba(0,220,255,0)"
+    );
+
+    ctx.fillStyle = roadGlow;
+
+    ctx.fillRect(
+        0,
+        roadTop,
+        W,
+        H - roadTop
+    );
+}
