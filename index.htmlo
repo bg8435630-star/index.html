@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Neon Rush</title>
+</head>
+
+<body>
+
+    <!-- Your game HTML goes here -->
+
+    <script>
+
+        // ALL GAME JAVASCRIPT GOES HERE
+
+        function drawBackground() {
+            // your road code
+        }
+
+    </script>
+
+</body>
+</html>
